@@ -105,25 +105,28 @@ $recent_orders = $connection->query($query);
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Admin Dashboard</h1>
-        </div>
-    </header>
-
     <nav class="admin-nav">
         <div class="container">
-            <ul>
-                <li><a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
+            <div class="nav-brand">
+                <h2>Shada Admin</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="dashboard.php" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="add_product.php"><i class="fas fa-plus"></i> Add Product</a></li>
                 <li><a href="view_products.php"><i class="fas fa-box"></i> Products</a></li>
                 <li><a href="view_orders.php"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+                <li><a href="delivery_management.php"><i class="fas fa-truck"></i> Deliveries</a></li>
+                <li><a href="noest_sync.php"><i class="fas fa-sync"></i> Noest Sync</a></li>
                 <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </nav>
 
     <main class="container">
+        <div class="page-header">
+            <h1>Tableau de Bord</h1>
+            <p>Vue d'ensemble de votre boutique</p>
+        </div>
         <div class="dashboard-stats">
             <div class="stat-card">
                 <h3>Total Products</h3>

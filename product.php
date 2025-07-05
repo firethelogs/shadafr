@@ -1,5 +1,6 @@
 <?php
 require_once 'includes/config.php';
+require_once 'includes/delivery_fees.php';
 
 // Get product ID from URL
 $product_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -100,7 +101,6 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                 <?php if (!empty($product['description'])): ?>
                     <p class="product-description"><?php echo h($product['description']); ?></p>
                 <?php endif; ?>
-                <p class="price">DZD <?php echo number_format($product['price_dzd'], 2); ?></p>
                 
                 <form action="process_order.php" method="POST" class="order-form">
                     <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
@@ -141,40 +141,35 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                         <label>Option de livraison :</label>
                         <div class="delivery-options">
                             <label class="radio-label">
-                                <input type="radio" name="delivery_choice" value="domicile" checked>
-                                <span>Domicile</span>
+                                <input type="radio" name="delivery_choice" value="domicile" checked onchange="updateDeliveryFee()">
+                                <span>Livraison à domicile</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="delivery_choice" value="bureau_noest">
-                                <span>Bureau Noest</span>
+                                <input type="radio" name="delivery_choice" value="bureau_noest" onchange="updateDeliveryFee()">
+                                <span>Bureau Noest (Stop Desk)</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="wilaya">Wilaya :</label>
-                        <select id="wilaya" name="wilaya" class="form-control" required>
+                        <select id="wilaya" name="wilaya" class="form-control" required onchange="updateDeliveryFee()">
                             <option value="">Choisissez votre Wilaya</option>
                             <?php
-                            $wilayas = [
-                                "1- Adrar", "2- Chlef", "3- Laghouat", "4- Oum El Bouaghi", "5- Batna",
-                                "6- Béjaïa", "7- Biskra", "8- Béchar", "9- Blida", "10- Bouira",
-                                "11- Tamanrasset", "12- Tébessa", "13- Tlemcen", "14- Tiaret", "15- Tizi-Ouzou",
-                                "16- Algiers", "17- Djelfa", "18- Jijel", "19- Sétif", "20- Saïda",
-                                "21- Skikda", "22- Sidi Bel Abbès", "23- Annaba", "24- Guelma", "25- Constantine",
-                                "26- Médéa", "27- Mostaganem", "28- M'Sila", "29- Mascara", "30- Ouargla",
-                                "31- Oran", "32- El Bayadh", "33- Illizi", "34- Bordj Bou Arreridj", "35- Boumerdès",
-                                "36- El Tarf", "37- Tindouf", "38- Tissemsilt", "39- El Oued", "40- Khenchela",
-                                "41- Souk Ahras", "42- Tipaza", "43- Mila", "44- Aïn Defla", "45- Naâma",
-                                "46- Aïn Témouchent", "47- Ghardaïa", "48- Relizane", "49- Timimoun", "50- Bordj Badji Mokhtar",
-                                "51- Ouled Djellal", "52- Béni Abbès", "53- In Salah", "54- In Guezzam", "55- Touggourt",
-                                "56- Djanet", "57- El MGhair", "58- El Meniaa"
-                            ];
-                            foreach ($wilayas as $wilaya) {
-                                echo "<option value=\"" . h($wilaya) . "\">" . h($wilaya) . "</option>";
+                            $wilayas = DeliveryFees::getAllWilayas();
+                            foreach ($wilayas as $wilayaId => $wilayaData) {
+                                echo "<option value=\"{$wilayaId}\">{$wilayaId}- {$wilayaData['name']}</option>";
                             }
                             ?>
                         </select>
+                    </div>
+
+                    <div class="price-section">
+                        <p class="price">Prix du produit: <span id="productPrice"><?php echo number_format($product['price_dzd'], 0); ?> DZD</span></p>
+                        <p class="delivery-fee">Frais de livraison: <span id="deliveryFee">0 DZD</span></p>
+                        <div class="total-price">
+                            <strong>Total: <span id="totalPrice"><?php echo number_format($product['price_dzd'], 0); ?> DZD</span></strong>
+                        </div>
                     </div>
 
                     <button type="submit" class="btn">
@@ -192,9 +187,71 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
     </footer>
 
     <script>
+        // Delivery fees data
+        const deliveryFees = <?php echo json_encode(DeliveryFees::getAllWilayas()); ?>;
+        const productPrice = <?php echo $product['price_dzd']; ?>;
+        
         function updateMainImage(src) {
             document.getElementById('mainImage').src = src;
         }
+        
+        function updateDeliveryFee() {
+            const wilayaSelect = document.getElementById('wilaya');
+            const deliveryChoice = document.querySelector('input[name="delivery_choice"]:checked');
+            
+            if (wilayaSelect.value && deliveryChoice) {
+                const wilayaId = wilayaSelect.value;
+                const deliveryType = deliveryChoice.value === 'domicile' ? 'domicile' : 'stopdesk';
+                
+                let deliveryFee = 0;
+                if (deliveryFees[wilayaId]) {
+                    deliveryFee = deliveryFees[wilayaId][deliveryType];
+                }
+                
+                const totalPrice = productPrice + deliveryFee;
+                
+                // Update the display
+                document.getElementById('deliveryFee').textContent = deliveryFee.toLocaleString() + ' DZD';
+                document.getElementById('totalPrice').textContent = totalPrice.toLocaleString() + ' DZD';
+                
+                // Add visual feedback
+                const deliveryFeeElement = document.getElementById('deliveryFee');
+                deliveryFeeElement.style.color = deliveryFee > 0 ? '#e74c3c' : '#27ae60';
+                
+                // Show delivery info
+                const wilayaText = wilayaSelect.options[wilayaSelect.selectedIndex].text;
+                const deliveryText = deliveryChoice.value === 'domicile' ? 'Livraison à domicile' : 'Bureau Noest (Stop Desk)';
+                
+                // Update or create delivery info display
+                let deliveryInfo = document.getElementById('deliveryInfo');
+                if (!deliveryInfo) {
+                    deliveryInfo = document.createElement('div');
+                    deliveryInfo.id = 'deliveryInfo';
+                    deliveryInfo.className = 'delivery-info';
+                    document.querySelector('.price-section').appendChild(deliveryInfo);
+                }
+                
+                deliveryInfo.innerHTML = `
+                    <small>
+                        <i class="fas fa-truck"></i> ${deliveryText} vers ${wilayaText}
+                    </small>
+                `;
+            } else {
+                // Reset to default
+                document.getElementById('deliveryFee').textContent = '0 DZD';
+                document.getElementById('totalPrice').textContent = productPrice.toLocaleString() + ' DZD';
+                
+                const deliveryInfo = document.getElementById('deliveryInfo');
+                if (deliveryInfo) {
+                    deliveryInfo.remove();
+                }
+            }
+        }
+        
+        // Initialize delivery fee calculation when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDeliveryFee();
+        });
     </script>
 </body>
 </html>

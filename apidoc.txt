@@ -1,0 +1,359 @@
+1- Ajouter une commande
+POST [ https://app.noest-dz.com/api/public/create/order ]
+Description Conditions
+api_token Fournit par la société de livraison required
+user_guid Fournit par la société de livraison required
+reference Reference de la commande Nullable | max:255
+client le nom & prénom du client est obligatoire et il ne doit pas dépasser
+une longueurde 255 caractères required | max:255
+phone le numéro de téléphone est obligatoire et peut prendre 9 chiffres
+pour les numérofix ou 10 chiffres pour les numéro mobiles required | digits_between:9,10
+phone_2 N’es pas obligatoire digits_between:9,10
+adresse L’adresse du client est obligatoire et ne doit pas dépasser une
+longueur de 255 caractères required | max:255
+wilaya_id L’identifiant de la wilaya est obligatoire required | integer |
+between:1,48
+commune
+La commune est obligatoire et ne doit pas dépasser une longueur de
+255 caractères required | max:255
+montant Le montant est obligatoire et doit être numérique required | numeric
+remarque La remarque ne doit pas dépasser une longueur de 255 caractères max:255
+produit
+Le nom du ou des produis est obligatoire
+Si la commande sera préparé du stock chez Nord et ouest, les
+références des produits doivent être séparés par une virgule ( Ex :
+prod001,prod052 )
+required
+type_id
+Le type est obligatoire.
+1 : Livraison [faire une livraison]
+2 : Echange [faire un échange de colis avec le
+client final]
+3 : Pick up [collecter un colis au près du client
+finale]
+required | integer|between:1,3
+poids Le poids du colis required | integer
+stop_desk
+Si la commande est en stop desk ou bien en
+livraison domicile
+0 : à domicile | 1 : stop desk
+required | integer|between:0,1
+station_code
+Le code de la station de livraison, s’il s’agit d’une
+livraison stopdesk.
+Pour obtenir la liste complète des codes, veuillez
+utiliser l’endpoint mentionné ci-dessous dans
+cette documentation.
+Required_if stop_desk =1
+stock Si la commande sera préparée du stock chez Nord
+et ouest
+0 : Non | 1 : Oui
+integer|between:0,1
+quantite Les quantités de chaque produit séparé par une
+virgule
+Required_if : stock = 1
+can_open
+Si le destinataire peut ouvrir la commande ou pas
+0 : Non | 1 : Oui
+integer|between:0,1
+r.
+{
+"success": true,
+"tracking": "ECSJFS2008106396"
+}
+
+2- Valider une commande
+POST [ https://app.noest-dz.com/api/public/valid/order ]
+Description Conditions
+api_token Fournit par la société de livraison required
+user_guid Fournit par la société de livraison required
+tracking Tracking de la commande required
+{
+"success":true,
+}
+NB : Apres la validation de la commande il n’est plus possible de la supprimer ou de la modifier.
+3- Supprimer une commande
+POST [ https://app.noest-dz.com/api/public/delete/order ]
+Description Conditions
+api_token Fournit par la société de livraison required
+user_guid Fournit par la société de livraison required
+tracking Tracking de la commande required
+{
+"success":true,
+}
+
+4- Modifier une commande
+POST [ https://app.noest-dz.com/api/public/update/order ]
+Description Conditions
+api_token Fournit par la société de livraison required
+user_guid Fournit par la société de livraison required
+tracking Tracking de la commande required
+reference Référence de la commande
+client le nom & prénom du client ne doit pas dépasser une
+longueur de 255 caractères
+Nullable | max:255
+tel le numéro de téléphone peut prendre 9 chiffres pour les
+numérofix ou 10 chiffres pour les numéro mobiles
+Nullable
+|digits_between:9,10
+tel2 digits_between:9,10
+adresse L’adresse du client ne doit pas dépasser une longueur de
+255
+caractères
+Nullable | max:255
+wilaya L’identifiant de la wilaya Nullable | integer |
+between:1,48
+commune La commune est obligatoire et ne doit pas dépasser une
+longueur de 255 caractères
+Nullable | max:255
+montant Le montant est obligatoire et doit être numérique Nullable | numeric
+remarque La remarque ne doit pas dépasser une longueur de 255
+caractères
+max:255
+product Le nom du ou des produis est obligatoire. Si la commande
+sera préparé du stock chez Noest, les références des
+produits doivent être séparés par une virgule ( Ex :
+prod001,prod052 )
+Nullable
+poids Le poids du colis Nullable | integer
+type Le type est obligatoire.
+1: Livraison [faire une livraison]
+2 : Echange [faire un échange de colis
+avec le client final]
+3 : Pick up [collecter un colis au près du
+client finale]
+Nullable |
+integer|between:1,3
+stop_desk Si la commande est en stop desk ou bien en
+livraison domicile
+0 : à domicile
+1 : stop desk
+Nullable |
+integer|between:0,1
+{
+"success": true,
+}
+5- Ajouter une remarque
+GET [ https://app.noest-dz.com/api/public/add/maj ]
+Description Conditions
+api_token Fournit par la société de livraison required
+tracking Tracking de la commande required
+content Contenu de la mise a jour Required | string |
+max : 255
+6- Demander une nouvelle tentative
+GET [ https://app.noest-dz.com/api/public/ask/new-tentative ]
+Description Conditions
+api_token Fournit par la société de livraison required
+tracking Tracking de la commande required
+7- Demander le retour
+GET [ https://app.noest-dz.com/api/public/ask/return ]
+Description Conditions
+api_token Fournit par la société de livraison required
+tracking Tracking de la commande required
+8- Télécharger le bordereau
+GET [ https://app.noest-dz.com/api/public/get/order/label ]
+Description Conditions
+api_token Fournit par la société de livraison required
+tracking Tracking de la commande required
+9- Suivi de plusieurs commandes
+POST [ https://app.noest-dz.com/api/public/get/trackings/info ]
+Description Conditions
+api_token Fournit par la société de livraison required
+user_guid Fournit par la société de livraison required
+trackings Trackings de la commande Required | Array
+{
+"TRACKING00000000001": {
+"OrderInfo": {
+"tracking": "TRACKING00000000001",
+"reference": "REF0001",
+"client": "John doe",
+"phone": "0550505050",
+"phone_2": null,
+,"بلدية بني زيد ، لولوج ،" :"adresse"
+"wilaya_id": 21,
+"commune": "Skikda",
+"montant": "5200.00",
+"remarque": "",
+"produit": "SHAMPOO FOR MEN",
+ "driver_name":"Livreur 0001",
+ "driver_tel":"0550000000",
+"type_id": 1,
+"created_at": "2022-06-06T12:45:04.000000Z"
+},
+"recipientName": "John doe",
+"shippedBy": "BOUTIQUE TEST 1",
+"originCity": 35,
+"destLocationCity": 21,
+"activity": [
+{
+"event": "Uploadé sur le système",
+"causer": "PARTENAIRE",
+"badge-class": "badge-success",
+"by": "produits-Bio",
+"name": "",
+"driver": "",
+"fdr": "",
+"date": "2022-10-15 21:33:49"
+},
+..
+..
+..
+]
+},
+"TRACKING00000000002": {
+"OrderInfo": {
+"tracking": "TRACKING00000000001",
+"reference": "REF0002",
+"client": "jane doe",
+"phone": "0660606060",
+"phone_2": null,
+"adresse": "centre ville",
+"wilaya_id": 11,
+"commune": "Tamanghasset",
+"montant": "5500.00",
+"remarque": "",
+"produit": "SHAMPOO FOR MEN",
+ "driver_name":"Livreur 0001",
+ "driver_tel":"0550000000",
+"type_id": 1,
+"created_at": "2022-06-06T12:45:04.000000Z"
+},
+"recipientName": "Jane doe",
+"shippedBy": "BOUTIQUE TEST 1",
+"originCity": 35,
+"destLocationCity": 11,
+"activity": [
+{
+"event_key": " return_dispatched_to_partenaire",
+ "event": "Retour transmis au partenaire",
+"causer": "NOEST",
+"badge-class": "badge-primary",
+"by": "",
+"name": "",
+"driver": "",
+"fdr": "",
+"date": "2022-11-01 10:18:12"
+},
+..
+]
+}
+}
+10-Liste des evenements
+Event Key Event
+upload Uploadé sur le système
+customer_validation Validé
+validation_collect_colis Colis Ramassé
+validation_reception_admin Reception validé
+validation_reception Enlevé par le livreur
+fdr_activated
+En livraison
+sent_to_redispatch
+nouvel_tentative_asked_by_customer Nouvelle tentative demandée par le vendeur
+return_asked_by_customer Retour demandé par le partenaire
+return_asked_by_hub Retour En transit
+retour_dispatched_to_partenaires
+return_dispatched_to_partenaire Retour transmis au partenaire
+colis_retour_transmit_to_partner
+colis_pickup_transmit_to_partner Pick-UP transmis au partenaire
+annulation_dispatch_retour
+Transmission du retour au partenaire annulée
+cancel_return_dispatched_to_partenaire
+livraison_echoue_recu Retour reçu par le partenaire
+return_validated_by_partener Retour validé par le partenaire
+return_redispatched_to_livraison Retour remis en livraison
+return_dispatched_to_warehouse Retour transmis vers entrepôt
+pickedup Pick-Up collecté
+valid_return_pickup Pick-Up validé
+pickup_picked_recu Pick-Up reçu par le partenaire
+colis_suspendu Suspendu
+livre
+Livré
+livred
+verssement_admin_cust Montant transmis au partenaire
+verssement_admin_cust_canceled
+Versement annulé
+verssement_hub_cust_canceled
+validation_reception_cash_by_partener Montant reçu par le partenaire
+echange_valide Échange validé
+echange_valid_by_hub
+ask_to_delete_by_admin
+Demande de suppression
+ask_to_delete_by_hub
+edited_informations Informations modifiées
+edit_price Prix modifié
+edit_wilaya Changement de wilaya
+extra_fee Surfacturation du colis
+mise_a_jour Tentative de livraison
+11-Liste des bureaux (stations)
+POST [ https://app.noest-dz.com/api/public/desks ]
+Description Conditions
+api_token Fournit par la société de livraison required
+user_guid Fournit par la société de livraison required
+{
+ "01A": {
+ "code": "1A",
+ "name": "Adrar",
+ "address": "Cité les palmier en face l'hopital",
+ "map": "",
+ "phones": {
+ "0": "0550602181",
+ "1": "0561623531",
+ "2": "",
+ "3": ""
+ },
+ "email": "adrar@noest-dz.com"
+ },
+ "02A": {
+ "code": "2A",
+ "name": "Chlef",
+ "address": "Rue Lac des Forêts (À côté du CNRC)",
+ "map": "",
+ "phones": {
+ "0": "0770582116",
+ "1": "0561686360",
+ "2": "",
+ "3": ""
+ },
+ "email": "chlef@noest-dz.com"
+ },
+ ...
+}
+12-Liste des frais de livraison
+POST [ https://app.noest-dz.com/api/public/fees ]
+Description Conditions
+api_token Fournit par la société de livraison required
+user_guid Fournit par la société de livraison required
+{
+ "tarifs": {
+ "return": {
+ "16": {
+ "tarif_id": 400,
+ "wilaya_id": 16,
+ "tarif": "300",
+ "tarif_stopdesk": "300"
+ },
+ "9": {
+ "tarif_id": 400,
+ "wilaya_id": 9,
+ "tarif": "300",
+ "tarif_stopdesk": "300"
+ }
+ ...
+ },
+ "delivery": {
+ "16": {
+ "tarif_id": 399,
+ "wilaya_id": 16,
+ "tarif": "700",
+ "tarif_stopdesk": "300"
+ },
+ "9": {
+ "tarif_id": 399,
+ "wilaya_id": 9,
+ "tarif": "800",
+ "tarif_stopdesk": "350"
+ }
+ ...
+ }
+ }
+} 

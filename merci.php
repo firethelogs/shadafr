@@ -1,5 +1,23 @@
 <?php
+require_once 'includes/config.php';
+require_once 'includes/delivery_fees.php';
 // page de remerciement après la commande
+
+$order_details = null;
+if (isset($_GET['order_id'])) {
+    $order_id = filter_input(INPUT_GET, 'order_id', FILTER_VALIDATE_INT);
+    if ($order_id) {
+        $stmt = $connection->prepare("
+            SELECT o.*, p.name as product_name, p.price_dzd as product_price
+            FROM orders o 
+            JOIN products p ON o.product_id = p.id 
+            WHERE o.id = :id
+        ");
+        $stmt->bindValue(':id', $order_id, SQLITE3_INTEGER);
+        $result = $stmt->execute();
+        $order_details = $result->fetchArray(SQLITE3_ASSOC);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -71,11 +89,34 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
         .thank-you-details h3 {
             color: var(--primary-color);
             margin-bottom: 1rem;
+            font-size: 1.3rem;
         }
         
         .thank-you-details p {
-            margin-bottom: 0.5rem;
-            color: #555;
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        .order-pricing {
+            background: #e8f5e8;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .order-pricing p {
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .order-pricing p:last-child {
+            border-top: 2px solid #28a745;
+            padding-top: 0.5rem;
+            margin-top: 1rem;
+            font-size: 1.3rem;
         }
         
         .action-buttons {
@@ -165,7 +206,26 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
             </p>
             
             <div class="thank-you-details">
-                <h3><i class="fas fa-info-circle"></i> Prochaines étapes</h3>
+                <h3><i class="fas fa-info-circle"></i> Détails de votre commande</h3>
+                <?php if ($order_details): ?>
+                    <p><i class="fas fa-hashtag"></i> Commande #<?php echo $order_details['id']; ?></p>
+                    <p><i class="fas fa-box"></i> Produit: <?php echo h($order_details['product_name']); ?></p>
+                    <p><i class="fas fa-palette"></i> Couleur: <?php echo h($order_details['color']); ?></p>
+                    <p><i class="fas fa-ruler"></i> Taille: <?php echo h($order_details['taille']); ?></p>
+                    <p><i class="fas fa-map-marker-alt"></i> Livraison: <?php echo h($order_details['wilaya']); ?></p>
+                    
+                    <div class="order-pricing">
+                        <p><i class="fas fa-tag"></i> Prix du produit: <strong><?php echo number_format($order_details['product_price'], 0); ?> DZD</strong></p>
+                        <p><i class="fas fa-truck"></i> Frais de livraison: <strong><?php echo number_format($order_details['delivery_cost'], 0); ?> DZD</strong></p>
+                        <p style="font-size: 1.2em; color: #e74c3c;"><i class="fas fa-calculator"></i> Total: <strong><?php echo number_format($order_details['product_price'] + $order_details['delivery_cost'], 0); ?> DZD</strong></p>
+                    </div>
+                    
+                    <?php if ($order_details['noest_tracking_number']): ?>
+                        <p><i class="fas fa-barcode"></i> Suivi: <?php echo h($order_details['noest_tracking_number']); ?></p>
+                    <?php endif; ?>
+                <?php endif; ?>
+                
+                <h3 style="margin-top: 2rem;"><i class="fas fa-clock"></i> Prochaines étapes</h3>
                 <p><i class="fas fa-phone"></i> Nous vous appellerons dans les 24 heures</p>
                 <p><i class="fas fa-truck"></i> Confirmation des détails de livraison</p>
                 <p><i class="fas fa-credit-card"></i> Paiement à la livraison</p>
@@ -175,6 +235,11 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                 <a href="index.php" class="btn-home">
                     <i class="fas fa-home"></i> Retour à l'accueil
                 </a>
+                <?php if ($order_details && $order_details['noest_tracking_number']): ?>
+                    <a href="tracking.php?tracking=<?php echo urlencode($order_details['noest_tracking_number']); ?>" class="btn-secondary">
+                        <i class="fas fa-search"></i> Suivre ma commande
+                    </a>
+                <?php endif; ?>
                 <a href="javascript:history.back()" class="btn-secondary">
                     <i class="fas fa-arrow-left"></i> Retour
                 </a>
