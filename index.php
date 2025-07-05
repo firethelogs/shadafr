@@ -6,7 +6,7 @@ $query = "SELECT id, name, description, price_dzd, main_image FROM products ORDE
 $result = $connection->query($query);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <!-- Meta Pixel Code -->
 <script>
@@ -56,7 +56,7 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                         <?php endif; ?>
                         <p class="price">DZD <?php echo number_format($product['price_dzd'], 2); ?></p>
                         <a href="product.php?id=<?php echo $product['id']; ?>" class="btn">
-                            View Details
+                            Voir le produit
                         </a>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
 
             <?php if (!$hasProducts): ?>
                 <div class="no-products">
-                    <p>No products available at the moment.</p>
+                    <p>Aucun produit disponible pour le moment.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -72,7 +72,7 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
 
     <footer>
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Shada. All rights reserved.</p>
+            <p>&copy; <?php echo date('Y'); ?> Shada. Tous droits réservés.</p>
         </div>
     </footer>
 </body>

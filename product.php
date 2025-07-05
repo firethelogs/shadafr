@@ -29,12 +29,10 @@ $sizes = array_map('trim', explode(',', $product['tailles']));
 
 // Check for success message
 $success_message = '';
-if (isset($_GET['order']) && $_GET['order'] === 'success') {
-    $success_message = 'Your order has been placed successfully! We will contact you soon.';
-}
+// Message removed: handled by merci.php now
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <!-- Meta Pixel Code -->
 <script>
@@ -108,31 +106,31 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                     <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
                     
                     <div class="form-group">
-                        <label for="customer_name">Full Name:</label>
+                        <label for="customer_name">Nom complet :</label>
                         <input type="text" id="customer_name" name="customer_name" class="form-control" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="phone">Phone Number:</label>
+                        <label for="phone">Numéro de téléphone :</label>
                         <input type="tel" id="phone" name="phone" class="form-control" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="address">Delivery Address:</label>
+                        <label for="address">Adresse de livraison :</label>
                         <textarea id="address" name="address" class="form-control" required></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="taille">Size:</label>
+                        <label for="taille">Taille :</label>
                         <select id="taille" name="taille" class="form-control" required>
                             <option value="Standard">Standard</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="color">Select Color:</label>
+                        <label for="color">Choisissez la couleur :</label>
                         <select id="color" name="color" class="form-control" required>
-                            <option value="">Choose a color</option>
+                            <option value="">Choisissez une couleur</option>
                             <option value="Noir">Noir</option>
                             <option value="Beige">Beige</option>
                             <option value="Rose clair">Rose clair</option>
@@ -140,7 +138,7 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                     </div>
 
                     <div class="form-group">
-                        <label>Delivery Option:</label>
+                        <label>Option de livraison :</label>
                         <div class="delivery-options">
                             <label class="radio-label">
                                 <input type="radio" name="delivery_choice" value="domicile" checked>
@@ -154,9 +152,9 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                     </div>
 
                     <div class="form-group">
-                        <label for="wilaya">Select Wilaya:</label>
+                        <label for="wilaya">Wilaya :</label>
                         <select id="wilaya" name="wilaya" class="form-control" required>
-                            <option value="">Choose your Wilaya</option>
+                            <option value="">Choisissez votre Wilaya</option>
                             <?php
                             $wilayas = [
                                 "1- Adrar", "2- Chlef", "3- Laghouat", "4- Oum El Bouaghi", "5- Batna",
@@ -180,7 +178,7 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
                     </div>
 
                     <button type="submit" class="btn">
-                        <i class="fas fa-shopping-cart"></i> Order Now
+                        <i class="fas fa-shopping-cart"></i> Commander
                     </button>
                 </form>
             </div>
@@ -189,7 +187,7 @@ src="https://www.facebook.com/tr?id=1026551879468585&ev=PageView&noscript=1"
 
     <footer>
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Shada. All rights reserved.</p>
+            <p>&copy; <?php echo date('Y'); ?> Shada. Tous droits réservés.</p>
         </div>
     </footer>
 

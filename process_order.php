@@ -56,7 +56,7 @@ try {
     $stmt->bindValue(':wilaya', $wilaya, SQLITE3_TEXT);
 
     if ($stmt->execute()) {
-        header("Location: product.php?id=" . $product_id . "&order=success");
+        header("Location: merci.php");
         exit;
     } else {
         throw new Exception("Database error.");
