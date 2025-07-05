@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: my-php-site
+    env: php
+    buildCommand: ""
+    startCommand: ""
+    plan: free
+    autoDeploy: true
